@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { gsap } from "gsap";
 import React, { useEffect, useRef } from "react";
@@ -16,13 +16,11 @@ const WCU: React.FC = () => {
     const container = containerRef.current;
     if (!container) return;
 
-    // Use gsap.context to scope animations and ScrollTrigger to this component
     const ctx = gsap.context(() => {
       const left = leftRef.current!;
       const middle = middleRef.current!;
       const right = rightRef.current!;
 
-      // set initial states scoped to this context
       gsap.set(middle, { xPercent: -100 });
       gsap.set([left, right], { autoAlpha: 0, xPercent: 0, scale: 0.98 });
 
@@ -49,7 +47,6 @@ const WCU: React.FC = () => {
     }, container);
 
     return () => {
-      // revert the context which will kill timelines and ScrollTriggers created inside it
       ctx.revert();
     };
   }, []);
@@ -75,7 +72,7 @@ const WCU: React.FC = () => {
               Access premium legal services without stretching your budget.
             </p>
             <hr className="border-t border-gray-500" />
-            <ul className="list-disc list-inside text-xs sm:text-sm">
+            <ul className="list-disc list-inside text-xs sm:text-sm text-start">
               <li>Flexible plans to suit various financial needs.</li>
               <li>Transparent pricing with no hidden charges.</li>
               <li>Quality legal support at an unbeatable value.</li>
@@ -94,7 +91,7 @@ const WCU: React.FC = () => {
               your needs.
             </p>
             <hr className="border-t border-gray-500" />
-            <ul className="list-disc list-inside text-xs sm:text-sm">
+            <ul className="list-disc list-inside text-xs sm:text-sm text-start">
               <li>Diverse but expert lawyers.</li>
               <li>Best lawyer-client fit combination.</li>
               <li>Comprehensive solutions as per requirements.</li>
@@ -112,7 +109,7 @@ const WCU: React.FC = () => {
               Access premium legal services without stretching your budget.
             </p>
             <hr className="border-t border-gray-500" />
-            <ul className="list-disc list-inside text-xs sm:text-sm">
+            <ul className="list-disc list-inside text-xs sm:text-sm text-start">
               <li>Flexible plans to suit various financial needs.</li>
               <li>Transparent pricing with no hidden charges.</li>
               <li>Quality legal support at an unbeatable value.</li>
