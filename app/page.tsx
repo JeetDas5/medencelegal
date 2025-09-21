@@ -6,6 +6,7 @@ import WCU from "@/components/WCU";
 import Comparisions from "@/components/Comparisions";
 import Testimonials from "@/components/Testimonials";
 import Trust from "@/components/Trust";
+import FAQs from "@/components/FAQs";
 
 export default function Home() {
   return (
@@ -18,6 +19,7 @@ export default function Home() {
       <Comparisions />
       <Testimonials />
       <Trust />
+      <FAQs />
     </main>
   );
 }
