@@ -34,7 +34,14 @@ const Hero: React.FC = () => {
           <button className="mt-4 p-5 bg-yellow-200/60 text-blue-900 rounded-full hover:bg-yellow-300/60 w-fit cursor-pointer">
             Check Plans
           </button>
-          <button className="mt-4 p-5 bg-white text-blue-900 rounded-full hover:bg-gray-200 w-fit cursor-pointer flex flex-row gap-2 items-center">
+          <button
+            className="mt-4 p-5 bg-white text-blue-900 rounded-full hover:bg-gray-200 w-fit cursor-pointer flex flex-row gap-2 items-center"
+            onClick={() => {
+              if (typeof window !== "undefined") {
+                window.dispatchEvent(new CustomEvent("open-booking"));
+              }
+            }}
+          >
             <span>Book a Call</span>
             <BsArrowUpRightCircle size={24} />
           </button>
