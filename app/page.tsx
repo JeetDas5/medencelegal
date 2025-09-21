@@ -1,17 +1,15 @@
-import Hero from "@/components/Hero";
-import Navbar from "@/components/Navbar";
-import Details from "@/components/Details";
 import HIW from "@/components/HIW";
 import WCU from "@/components/WCU";
+import Hero from "@/components/Hero";
+import FAQs from "@/components/FAQs";
+import Trust from "@/components/Trust";
+import Details from "@/components/Details";
 import Comparisions from "@/components/Comparisions";
 import Testimonials from "@/components/Testimonials";
-import Trust from "@/components/Trust";
-import FAQs from "@/components/FAQs";
 
 export default function Home() {
   return (
     <main>
-      <Navbar />
       <Hero />
       <Details />
       <HIW />

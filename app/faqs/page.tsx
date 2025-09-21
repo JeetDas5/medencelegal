@@ -1,7 +1,5 @@
 "use client";
-
-import Navbar from "@/components/Navbar";
-import { allFaqs } from "@/data"; // <-- structured data with topics
+import { allFaqs } from "@/data";
 import React, { useState } from "react";
 
 const Page = () => {
@@ -22,7 +20,6 @@ const Page = () => {
 
   return (
     <section className="px-8 md:px-16">
-      <Navbar />
       <h1 className="text-2xl md:text-4xl font-bold text-center text-[#0A0B5C] mt-4 p-2 md:p-8">
         Frequently Asked Questions
       </h1>
