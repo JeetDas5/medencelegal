@@ -2,6 +2,7 @@ import Hero from "@/components/Hero";
 import Navbar from "@/components/Navbar";
 import Details from "@/components/Details";
 import HIW from "@/components/HIW";
+import WCU from "@/components/WCU";
 
 export default function Home() {
   return (
@@ -10,6 +11,7 @@ export default function Home() {
       <Hero />
       <Details />
       <HIW />
+      <WCU />
     </main>
   );
 }

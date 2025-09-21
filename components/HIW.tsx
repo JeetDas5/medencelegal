@@ -1,9 +1,11 @@
 import React from "react";
 
-const HIW = () => {
+const HIW: React.FC = () => {
   return (
     <section className="relative grid grid-cols-1 md:grid-cols-5 gap-8 p-5 my-4">
-        <h1 className="text-4xl mb-3 font-bold col-span-1 md:col-span-5 text-center">How it works</h1>
+      <h1 className="text-4xl mb-3 font-bold col-span-1 md:col-span-5 text-center">
+        How it works
+      </h1>
       <div className="relative flex flex-col items-center gap-2">
         <svg
           stroke="black"
