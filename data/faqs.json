@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "question": "Are you an insurance company?",
+    "answer": "No, Medence is not an insurance company. However, we provide personalized legal services by connecting you with experienced lawyers on a before-the-event model of payment. This ensures you do not have to worry about any unforeseen legal expenses"
+  },
+  {
+    "id": 2,
+    "question": "Why is the plan pricing so affordable while lawyers outside charge so high?",
+    "answer": "Medence provides affordable pricing by leveraging a scalable and aggregation model that enables us to offer legal services at a lower cost while maintaining high-quality expertise. Our focus is on providing value to customers without the high overhead costs associated with traditional law firms"
+  },
+  {
+    "id": 3,
+    "question": "Can I avail the lawyer service after the trouble arises and not before?",
+    "answer": "While we specialise in providing before-the-event legal services to increase affordability, you can also avail the lawyer service after the event too. But in such cases the fees for litigation is higher and vary based on lawyers' charges."
+  },
+  {
+    "id": 4,
+    "question": "Can I contact my personal lawyer in emergency situations?",
+    "answer": "Yes, you can reach your personal lawyer for urgent matters. However, please note that response times may slightly vary depending on the severity of the situation."
+  },
+  {
+    "id": 5,
+    "question": "Is my information safe and confidential with Medence?",
+    "answer": "Yes, your information is secure and treated with the utmost confidentiality. We adhere to strict privacy policies to ensure that your legal matters and personal data are protected."
+  },
+  {
+    "id": 6,
+    "question": "Do you have in-house lawyers?",
+    "answer": "No we don't have in-house lawyers per se. Instead we partner with qualified lawyers and firms across all major cities."
+  }
+]

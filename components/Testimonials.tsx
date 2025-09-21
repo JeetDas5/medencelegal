@@ -4,7 +4,6 @@ import React from "react";
 import TestimonialCard from "./TestimonialCard";
 import testimonials from "../data/testimonials.json";
 
-// Use pure CSS marquee animation to create an infinite loop without JS complexity.
 const Testimonials: React.FC = () => {
   const items = [...testimonials, ...testimonials];
   return (
