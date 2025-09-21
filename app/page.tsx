@@ -5,6 +5,7 @@ import HIW from "@/components/HIW";
 import WCU from "@/components/WCU";
 import Comparisions from "@/components/Comparisions";
 import Testimonials from "@/components/Testimonials";
+import Trust from "@/components/Trust";
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
       <WCU />
       <Comparisions />
       <Testimonials />
+      <Trust />
     </main>
   );
 }
