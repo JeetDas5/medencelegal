@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Rahul Srivastava",
+    "role": "IT Professional",
+    "testimonial": "We have been planning to buy our first ever property. It was this time when my close friend told me to get the documents checked thoroughly. I used Medence's service — their lawyer found a legal issue that could have landed me in major trouble. Just that one review saved me from some financial disaster. Kudos to the team!",
+    "image": "/images/testimonials/1.webp"
+  },
+  {
+    "name": "Alok Mishra",
+    "role": "SDE Professional",
+    "testimonial": "My flatmate came across medence over his social media about their free rental agreement checker. We were already in trouble by then though. Our landlord without any warning or reason cut our deposit. And since we are young corporate guys we didn't want to further risk our careers by retaliating against landlord. But medence helped us recover our money from him legally without our involvement. Many other lawyers outside that we approached before meeting medence have inflated costs that were almost double of our 55k deposit. Medence gave us an easy way out here with their flexible plans. Made us feel it was fair. You guys are doing something that most startups fail which is impacting lives in a ways that actually matter.",
+    "image": "/images/testimonials/2.webp"
+  },
+  {
+    "name": "Pradeep Kumar",
+    "role": "Textile Business Owner",
+    "testimonial": "The customer team is highly responsive. While the lawyer himself was very professional from the start, what impressed me truly was their customer support. They responsed to my concerns and made me calm whenever I felt anxious with my legal issue.",
+    "image": "/images/testimonials/3.webp"
+  },
+  {
+    "name": "G. Sneha",
+    "role": "Government Service",
+    "testimonial": "Managing multiple projects can be overwhelming, but Sida has simplified the process. The collaboration features have improved team communication and efficiency.",
+    "image": "/images/testimonials/4.webp"
+  },
+  {
+    "name": "Anonymeous",
+    "role": "Not Disclosed",
+    "testimonial": "I'm skeptical of landlords after having been a victim of their fraud for twice. I'm so so happy with medences rental checkup, I honestly wouldn't even think twice to pay for such service. You people are such a gift to all victims like me who fell for landlord frauds. Please come to my hometown as well haha.",
+    "image": "/images/testimonials/5.webp"
+  }
+]
