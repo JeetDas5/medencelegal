@@ -3,9 +3,14 @@
 import React from "react";
 import Image from "next/image";
 import { motion } from "motion/react";
+import { getUser } from "../lib/user";
+import { addToast } from "@heroui/react";
+import { useRouter } from "next/navigation";
 import { BsArrowUpRightCircle } from "react-icons/bs";
 
 const Hero: React.FC = () => {
+  const router = useRouter();
+
   return (
     <section className="p-5 flex flex-row">
       <div className="w-1/2 p-5 flex flex-col mt-20">
@@ -37,9 +42,20 @@ const Hero: React.FC = () => {
           <button
             className="mt-4 p-5 bg-white text-blue-900 rounded-full hover:bg-gray-200 w-fit cursor-pointer flex flex-row gap-2 items-center"
             onClick={() => {
-              if (typeof window !== "undefined") {
-                window.dispatchEvent(new CustomEvent("open-booking"));
+              if (typeof window === "undefined") return;
+              const user:Record<string, unknown> | null = getUser();
+              if (!user) {
+                addToast({
+                  title: "Sign in required",
+                  description: "Please sign in before booking a call.",
+                  variant: "flat",
+                  color: "danger",
+                });
+                router.push("/signin");
+                return;
               }
+              const email = user && typeof user["email"] === "string" ? (user["email"] as string) : null;
+              window.dispatchEvent(new CustomEvent("open-booking", { detail: { email } }));
             }}
           >
             <span>Book a Call</span>

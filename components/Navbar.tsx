@@ -5,16 +5,21 @@ import { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { BsArrowUpRightCircle } from "react-icons/bs";
-import toast, { Toaster } from "react-hot-toast";
+import { addToast } from "@heroui/react";
 import { FiArrowRight } from "react-icons/fi";
 import { RxCross1 } from "react-icons/rx";
+import { getUser, clearUser } from "../lib/user";
+import axios from "axios";
 
 const Navbar = () => {
   const route = usePathname() || "";
 
   const [showPopup, setShowPopup] = useState(false);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const [user, setUser] = useState<Record<string, unknown> | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -22,10 +27,28 @@ const Navbar = () => {
     issue: "",
   });
 
+  const getUserEmail = (u: Record<string, unknown> | null): string | null => {
+    if (!u) return null;
+    const e = u["email"];
+    console.log("User email:", e);
+    return typeof e === "string" ? e : null;
+  };
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleLogout = () => {
+    clearUser();
+    setUser(null);
+    setFormData((prev) => ({ ...prev, email: "" }));
+    router.push("/");
+  };
+
+  const handleLoginRedirect = () => {
+    router.push("/signin");
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -38,29 +61,84 @@ const Navbar = () => {
       !formData.phone.trim() ||
       !formData.issue.trim()
     ) {
-      toast.error("Please fill in all fields.");
+      addToast({
+        title: "Validation Error",
+        description: "Please fill in all fields.",
+        variant: "flat",
+        color: "danger",
+      });
       return;
     }
 
     if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      toast.error("Please enter a valid email address.");
+      addToast({
+        title: "Validation Error",
+        description: "Please enter a valid email address.",
+        variant: "flat",
+        color: "danger",
+      });
       return;
     }
 
     if (!/^\+?[1-9]\d{1,14}$/.test(formData.phone)) {
-      toast.error("Please enter a valid phone number.");
+      addToast({
+        title: "Validation Error",
+        description: "Please enter a valid phone number.",
+        variant: "flat",
+        color: "danger",
+      });
       return;
     }
 
     if (formData.issue.length < 5) {
-      toast.error("Please provide a more detailed description of your issue.");
+      addToast({
+        title: "Validation Error",
+        description: "Please provide a more detailed description of your issue.",
+        variant: "flat",
+        color: "danger",
+      });
       return;
     }
 
-    toast.success("Your call has been booked!");
+    // submit to API using axios
+    const submit = async () => {
+      setLoading(true);
+      try {
+        const res = await axios.post("/api/issue", formData);
+        const data = res.data;
+        addToast({
+          title: "Success",
+          description: data?.message || "Your call has been booked!",
+          variant: "flat",
+          color: "success",
+        });
+        setFormData({ name: "", email: "", phone: "", issue: "" });
+        setShowPopup(false);
+      } catch (err) {
+        console.error("Submit error:", err);
+        if (axios.isAxiosError(err)) {
+          const msg = err.response?.data?.message || err.message || "Failed to submit";
+          addToast({
+            title: "Error",
+            description: msg,
+            variant: "flat",
+            color: "danger",
+          });
+        } else {
+          const msg = err instanceof Error ? err.message : "An error occurred";
+          addToast({
+            title: "Error",
+            description: msg || "Failed to submit your request.",
+            variant: "flat",
+            color: "danger",
+          });
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    setFormData({ name: "", email: "", phone: "", issue: "" });
-    setShowPopup(false);
+    void submit();
   };
 
   useEffect(() => {
@@ -76,9 +154,13 @@ const Navbar = () => {
     };
   }, [showPopup, loading]);
 
-  // Listen for custom event from other components (e.g., Hero) to open booking
   useEffect(() => {
-    const handler = () => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent)?.detail as { email?: string } | undefined;
+      const emailFromEvent = detail?.email;
+      if (emailFromEvent) {
+        setFormData((prev) => ({ ...prev, email: emailFromEvent }));
+      }
       setLoading(true);
       setTimeout(() => {
         setLoading(false);
@@ -95,9 +177,14 @@ const Navbar = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const user: Record<string, unknown> | null = getUser();
+    setUser(user);
+  }, []);
+
   return (
     <section className="flex justify-between items-center px-4 mx-8">
-      <Toaster position="bottom-right" />
 
       <div className="flex gap-8 items-center z-10">
         <div>
@@ -124,19 +211,53 @@ const Navbar = () => {
       </div>
 
       <div className="text-blue-900 text-lg cursor-pointer hover:text-blue-700">
-        <div className="flex items-center">
-          <button
-            onClick={() => {
-              setLoading(true);
-              setTimeout(() => {
-                setLoading(false);
-                setShowPopup(true);
-              }, 400);
-            }}
-          >
-            Book a call
-          </button>
-          <BsArrowUpRightCircle className="ml-2" size={24} />
+        <div className="flex items-center gap-6">
+          <div className="flex items-center">
+            <button
+              onClick={() => {
+                // require user to be signed in before booking
+                console.log("user on booking click:", user);
+                if (!user) {
+                  addToast({
+                    title: "Sign in required",
+                    description: "Please sign in before booking a call.",
+                    variant: "flat",
+                    color: "danger",
+                  });
+                  router.push("/signin");
+                  return;
+                }
+                const email = getUserEmail(user) || "";
+                console.log("Prefilling email:", email);
+                setFormData((prev) => ({ ...prev, email }));
+                console.log("Form data before booking:", formData);
+                setLoading(true);
+                setTimeout(() => {
+                  setLoading(false);
+                  setShowPopup(true);
+                }, 400);
+              }}
+            >
+              Book a call
+            </button>
+            <BsArrowUpRightCircle className="ml-2" size={24} />
+          </div>
+
+          {user ? (
+            <button
+              onClick={handleLogout}
+              className="px-3 py-1 border rounded bg-red-500 text-white"
+            >
+              Logout
+            </button>
+          ) : (
+            <button
+              onClick={handleLoginRedirect}
+              className="px-3 py-1 border rounded bg-blue-600 text-white"
+            >
+              Login
+            </button>
+          )}
         </div>
       </div>
 
@@ -170,6 +291,7 @@ const Navbar = () => {
                 onChange={handleChange}
                 placeholder="jeet@email.com"
                 required
+                readOnly={Boolean(getUserEmail(user))}
                 className="w-full border px-3 py-2 rounded"
               />
               <span className="font-semibold">Phone Number*</span>
@@ -194,10 +316,13 @@ const Navbar = () => {
               />
               <div className="flex flex-row justify-center gap-4">
                 <button
-                  className="px-4 py-2 bg-black text-white font-semibold w-full max-w-[350px] rounded-xl flex items-center justify-center gap-2"
-                  onClick={handleSubmit}
+                  type="submit"
+                  disabled={loading}
+                  className={`px-4 py-2 bg-black text-white font-semibold w-full max-w-[350px] rounded-xl flex items-center justify-center gap-2 ${
+                    loading ? "opacity-60 cursor-not-allowed" : ""
+                  }`}
                 >
-                  <span>Submit</span>
+                  <span>{loading ? "Submitting..." : "Submit"}</span>
                   <FiArrowRight />
                 </button>
               </div>

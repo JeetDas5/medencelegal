@@ -9,8 +9,17 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@heroui/button": "^2.2.26",
+    "@heroui/react": "^2.8.4",
+    "@heroui/system": "^2.4.22",
+    "@heroui/theme": "^2.4.22",
+    "axios": "^1.12.2",
+    "bcryptjs": "^3.0.2",
+    "framer-motion": "^12.23.18",
     "gsap": "^3.13.0",
     "lucide-react": "^0.544.0",
+    "mongodb": "^6.20.0",
+    "mongoose": "^8.18.1",
     "motion": "^12.23.16",
     "next": "15.5.3",
     "react": "19.1.0",

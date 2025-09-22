@@ -1,0 +1,7 @@
+interface UserType {
+  username?: string;
+  email: string;
+  password: string;
+  createdAt?: Date;
+}
+export default UserType;
