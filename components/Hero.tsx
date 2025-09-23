@@ -36,8 +36,8 @@ const Hero: React.FC = () => {
           transition={{ duration: 0.4, delay: 1 }}
           className="flex flex-row gap-6 font-semibold"
         >
-          <button className="mt-4 p-5 bg-yellow-200/60 text-blue-900 rounded-full hover:bg-yellow-300/60 w-fit cursor-pointer">
-            Check Plans
+          <button onClick={() => router.push("/dashboard")} className="mt-4 p-5 bg-yellow-200/60 text-blue-900 rounded-full hover:bg-yellow-300/60 w-fit cursor-pointer">
+            Go to Dashboard
           </button>
           <button
             className="mt-4 p-5 bg-white text-blue-900 rounded-full hover:bg-gray-200 w-fit cursor-pointer flex flex-row gap-2 items-center"
