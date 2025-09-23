@@ -2,9 +2,9 @@ import { Dashboard } from "@/components/Dashboard";
 
 const Page = () => {
   return (
-    <div>
+    <main className="max-w-[90vw] mx-auto">
       <Dashboard />
-    </div>
+    </main>
   );
 };
 

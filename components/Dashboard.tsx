@@ -22,8 +22,6 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -35,6 +33,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogAction,
+  AlertDialogCancel,
+} from "@/components/ui/alert-dialog";
 
 const initialData: Payment[] = [
   {
@@ -110,6 +118,10 @@ export function Dashboard() {
     amount: string;
     status: Payment["status"];
   }>({ email: "", amount: "", status: "pending" });
+
+  // Alert dialog state for delete confirmation
+  const [openAlert, setOpenAlert] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState<Payment | null>(null);
 
   function resetForm() {
     setForm({ email: "", amount: "", status: "pending" });
@@ -216,9 +228,10 @@ export function Dashboard() {
             const amount = parseFloat(row.getValue("amount"));
 
             // Format the amount as a dollar amount
-            const formatted = new Intl.NumberFormat("en-US", {
+            const formatted = new Intl.NumberFormat("en-IN", {
               style: "currency",
-              currency: "USD",
+              currency: "INR",
+              maximumFractionDigits: 2,
             }).format(amount);
 
             return <div className="text-right font-medium">{formatted}</div>;
@@ -239,13 +252,6 @@ export function Dashboard() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                  <DropdownMenuItem
-                    onClick={() => navigator.clipboard.writeText(payment.id)}
-                  >
-                    Copy payment ID
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={() => {
                       setEditing(payment);
@@ -255,13 +261,9 @@ export function Dashboard() {
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => {
-                      const ok = window.confirm(
-                        "Delete this row? This action cannot be undone."
-                      );
-                      if (ok)
-                        setData((prev) =>
-                          prev.filter((p) => p.id !== payment.id)
-                        );
+                      // open confirm dialog for this payment
+                      setPendingDelete(payment);
+                      setOpenAlert(true);
                     }}
                   >
                     Delete
@@ -272,7 +274,7 @@ export function Dashboard() {
           },
         },
       ];
-    }, [setData, setEditing]),
+  }, [setEditing]),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -346,6 +348,38 @@ export function Dashboard() {
             </Button>
           )}
         </div>
+            {/* Alert dialog for delete confirmation */}
+            <AlertDialog open={openAlert} onOpenChange={(v) => {
+              setOpenAlert(v);
+              if (!v) setPendingDelete(null);
+            }}>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete payment</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are you sure you want to delete this payment? This action cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel asChild>
+                    <Button variant="ghost">Cancel</Button>
+                  </AlertDialogCancel>
+                  <AlertDialogAction asChild>
+                    <Button
+                      onClick={() => {
+                        if (pendingDelete) {
+                          setData((prev) => prev.filter((p) => p.id !== pendingDelete.id));
+                        }
+                        setOpenAlert(false);
+                        setPendingDelete(null);
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
