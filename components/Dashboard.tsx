@@ -44,46 +44,19 @@ import {
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 
-const initialData: Payment[] = [
-  {
-    id: "m5gr84i9",
-    amount: 316,
-    status: "success",
-    email: "ken99@example.com",
-  },
-  {
-    id: "3u1reuv4",
-    amount: 242,
-    status: "success",
-    email: "Abe45@example.com",
-  },
-  {
-    id: "derv1ws0",
-    amount: 837,
-    status: "processing",
-    email: "Monserrat44@example.com",
-  },
-  {
-    id: "5kma53ae",
-    amount: 874,
-    status: "success",
-    email: "Silas22@example.com",
-  },
-  {
-    id: "bhqecj4p",
-    amount: 721,
-    status: "failed",
-    email: "carmella@example.com",
-  },
+const initialData: Plan[] = [
+  { id: "plan_basic", planName: "Legal Lite", planType: "basic", price: 499 },
+  { id: "plan_pro", planName: "Legal Pro", planType: "pro", price: 1499 },
+  { id: "plan_enterprise", planName: "Enterprise", planType: "enterprise", price: 4999 },
 ];
 
-const STORAGE_KEY = "sida_payments_v1";
+const STORAGE_KEY = "sida_plans_v1";
 
-export type Payment = {
+export type Plan = {
   id: string;
-  amount: number;
-  status: "pending" | "processing" | "success" | "failed";
-  email: string;
+  planName: string;
+  planType: "basic" | "pro" | "enterprise" | string;
+  price: number;
 };
 
 // columns will be created inside the Dashboard component so they can access handlers directly
@@ -94,10 +67,10 @@ export function Dashboard() {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
 
-  const [data, setData] = useState<Payment[]>(() => {
+  const [data, setData] = useState<Plan[]>(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) return JSON.parse(raw) as Payment[];
+      if (raw) return JSON.parse(raw) as Plan[];
     } catch {
       // ignore
     }
@@ -112,12 +85,12 @@ export function Dashboard() {
     }
   }, [data]);
 
-  const [editing, setEditing] = useState<Payment | null>(null);
+  const [editing, setEditing] = useState<Plan | null>(null);
   const [form, setForm] = useState<{
-    email: string;
-    amount: string;
-    status: Payment["status"];
-  }>({ email: "", amount: "", status: "pending" });
+    planName: string;
+    planType: Plan["planType"];
+    price: string;
+  }>({ planName: "", planType: "basic", price: "" });
 
   // Alert dialog state for delete confirmation
   const [openAlert, setOpenAlert] = useState(false);
@@ -129,13 +102,13 @@ export function Dashboard() {
   }
 
   function handleAdd() {
-    const newPayment: Payment = {
+    const newPlan: Plan = {
       id: Math.random().toString(36).slice(2, 9),
-      email: form.email || "new@example.com",
-      amount: Number(form.amount) || 0,
-      status: form.status,
+      planName: form.planName || "New Plan",
+      planType: form.planType,
+      price: Number(form.price) || 0,
     };
-    setData((d) => [newPayment, ...d]);
+    setData((d) => [newPlan, ...d]);
     resetForm();
   }
 
@@ -146,9 +119,9 @@ export function Dashboard() {
         p.id === editing.id
           ? {
               ...editing,
-              email: form.email || editing.email,
-              amount: Number(form.amount || editing.amount),
-              status: form.status,
+              planName: form.planName || editing.planName,
+              planType: form.planType || editing.planType,
+              price: Number(form.price || editing.price),
             }
           : p
       )
@@ -159,9 +132,9 @@ export function Dashboard() {
   useEffect(() => {
     if (editing) {
       setForm({
-        email: editing.email,
-        amount: String(editing.amount),
-        status: editing.status,
+        planName: editing.planName,
+        planType: editing.planType,
+        price: String(editing.price),
       });
     }
   }, [editing]);
@@ -169,7 +142,7 @@ export function Dashboard() {
   const table = useReactTable({
     data,
     // columns defined below so they have access to component handlers
-    columns: useMemo<ColumnDef<Payment>[]>(() => {
+    columns: useMemo<ColumnDef<Plan>[]>(() => {
       return [
         {
           id: "select",
@@ -196,44 +169,25 @@ export function Dashboard() {
           enableHiding: false,
         },
         {
-          accessorKey: "status",
-          header: "Status",
-          cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("status")}</div>
-          ),
+          accessorKey: "planName",
+          header: () => <div>Plan</div>,
+          cell: ({ row }) => <div className="font-medium">{row.getValue("planName")}</div>,
         },
         {
-          accessorKey: "email",
-          header: ({ column }) => {
-            return (
-              <Button
-                variant="ghost"
-                onClick={() =>
-                  column.toggleSorting(column.getIsSorted() === "asc")
-                }
-              >
-                Email
-                <ArrowUpDown />
-              </Button>
-            );
-          },
-          cell: ({ row }) => (
-            <div className="lowercase">{row.getValue("email")}</div>
-          ),
+          accessorKey: "planType",
+          header: "Type",
+          cell: ({ row }) => <div className="capitalize">{row.getValue("planType")}</div>,
         },
         {
-          accessorKey: "amount",
-          header: () => <div className="text-right">Amount</div>,
+          accessorKey: "price",
+          header: () => <div className="text-right">Price</div>,
           cell: ({ row }) => {
-            const amount = parseFloat(row.getValue("amount"));
-
-            // Format the amount as a dollar amount
+            const amount = parseFloat(row.getValue("price"));
             const formatted = new Intl.NumberFormat("en-IN", {
               style: "currency",
               currency: "INR",
               maximumFractionDigits: 2,
             }).format(amount);
-
             return <div className="text-right font-medium">{formatted}</div>;
           },
         },
@@ -254,15 +208,15 @@ export function Dashboard() {
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem
                     onClick={() => {
-                      setEditing(payment);
+                          setEditing(payment as Plan);
                     }}
                   >
                     Edit
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => {
-                      // open confirm dialog for this payment
-                      setPendingDelete(payment);
+                      // open confirm dialog for this plan
+                      setPendingDelete(payment as Plan);
                       setOpenAlert(true);
                     }}
                   >
@@ -274,7 +228,7 @@ export function Dashboard() {
           },
         },
       ];
-  }, [setEditing]),
+    }, [setEditing]),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -295,44 +249,43 @@ export function Dashboard() {
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+          placeholder="Filter plans..."
+          value={(table.getColumn("planName")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table.getColumn("planName")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
         <div className="ml-4 flex items-center space-x-2">
           <input
-            aria-label="email"
-            value={form.email}
-            onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-            placeholder="Email"
+            aria-label="planName"
+            value={form.planName}
+            onChange={(e) => setForm((f) => ({ ...f, planName: e.target.value }))}
+            placeholder="Plan name"
             className="border px-2 py-1 rounded"
           />
-          <input
-            aria-label="amount"
-            type="number"
-            value={form.amount}
-            onChange={(e) => setForm((f) => ({ ...f, amount: e.target.value }))}
-            placeholder="Amount"
-            className="w-24 border px-2 py-1 rounded"
-          />
           <select
-            value={form.status}
+            value={form.planType}
             onChange={(e) =>
               setForm((f) => ({
                 ...f,
-                status: e.target.value as Payment["status"],
+                planType: e.target.value as Plan["planType"],
               }))
             }
             className="border px-2 py-1 rounded"
           >
-            <option value="pending">pending</option>
-            <option value="processing">processing</option>
-            <option value="success">success</option>
-            <option value="failed">failed</option>
+            <option value="basic">basic</option>
+            <option value="pro">pro</option>
+            <option value="enterprise">enterprise</option>
           </select>
+          <input
+            aria-label="price"
+            type="number"
+            value={form.price}
+            onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))}
+            placeholder="Price"
+            className="w-24 border px-2 py-1 rounded"
+          />
           {editing ? (
             <>
               <Button size="sm" onClick={handleSaveEdit}>
@@ -355,10 +308,12 @@ export function Dashboard() {
             }}>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Delete payment</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Are you sure you want to delete this payment? This action cannot be undone.
-                  </AlertDialogDescription>
+                  <AlertDialogTitle>Delete plan</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to delete the plan{' '}
+                        <span className="font-medium">{pendingDelete?.planName}</span>?
+                        {' '}This action cannot be undone.
+                      </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel asChild>
